@@ -1,62 +1,121 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>EliisaBot</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
-	<style>
-		body {
-			margin: 0;
-			padding: 0;
-			font-family: 'Roboto', sans-serif;
-			background-color: #f5f5f5;
-			color: #333;
-		}
+    <title>{{ bot_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <style>
+        .loader {
+            width: 100px;
+            height: 75px;
+            margin: 0 auto;
+            background-color: #CCC;
+            position: relative;
+            border-radius: 100%;
+            zoom: 0.6;
+        }
 
-		.header {
-			background-color: #fff;
-			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-			padding: 20px;
-			text-align: center;
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			z-index: 100;
-		}
-
-		.container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			height: 100vh;
-		}
+        .loader:before {
+            content: '';
+            position: absolute;
+            box-sizing: border-box;
+            border: 15px solid transparent;
+            border-top: 25px solid #CCC;
+            transform: rotate(45deg);
+            top: 50px;
+            left: -15px;
+        }
 
 
-		.box {
-			width: 80%;
-			max-width: 600px;
-			padding: 30px;
-			background-color: #fff;
-			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-			border-radius: 8px;
-			text-align: start;
-		}
+        .loader:after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background-color: #FF3D00;
+            box-shadow: 20px 0 #FF3D00, -20px 0 #FF3D00;
+            animation: flash 0.5s ease-out infinite alternate;
+        }
 
-		h1 {
-			font-size: 48px;
-			font-weight: 700;
-			margin-bottom: 20px;
-			color: #333;
-		}
+        @keyframes flash {
+            0% {
+                background-color: rgba(255, 60, 0, 0.25);
+                box-shadow: 20px 0 rgba(255, 60, 0, 0.25), -20px 0 #FF3D00;
+            }
 
-		p {
-			font-size: 18px;
-			line-height: 1.5;
-			margin-bottom: 20px;
-			color: #555;
-		}
+            50% {
+                background-color: #FF3D00;
+                box-shadow: 20px 0 rgba(255, 60, 0, 0.25), -20px 0 rgba(255, 60, 0, 0.25);
+            }
+
+            100% {
+                background-color: rgba(255, 60, 0, 0.25);
+                box-shadow: 20px 0 #FF3D00, -20px 0 rgba(255, 60, 0, 0.25);
+            }
+        }
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            padding-top: 20px;
+            padding-bottom: 0px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            max-height: 145px;
+
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin-top: 145px;
+        }
+
+
+        .box {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            border-radius: 8px;
+            text-align: start;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #555;
+        }
 
         hr {
             border-color: #f5f5f5;
@@ -64,110 +123,117 @@
         }
 
         form {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			margin-top: 30px;
-		}
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
 
-		input[type="text"] {
-			width: 80%;
-			max-width: 400px;
-			padding: 10px;
-			border: none;
-			border-radius: 8px;
-			background-color: #eee;
-			margin-bottom: 20px;
-			font-size: 18px;
-			color: #333;
-		}
+        input[type="text"] {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #eee;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
 
-		input[type="submit"] {
-			padding: 10px;
-			border: none;
-			border-radius: 8px;
-			background-color: #4CAF50;
-			color: #fff;
-			font-size: 18px;
-			cursor: pointer;
-		}
+        input[type="submit"] {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
 
-		input[type="submit"]:hover {
-			background-color: #3e8e41;
-		}
+        input[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
 
-		.spinner {
-			border: 0.5rem solid rgba(0, 0, 0, 0.1);
-			border-top-color: #4CAF50;
-			border-radius: 50%;
-			width: 3rem;
-			height: 3rem;
-			animation: spin 1s ease-in-out infinite;
-		}
+        .hidden {
+            display: none;
+        }
 
-		@keyframes spin {
-			to {
-				transform: rotate(360deg);
-			}
-		}
+        .thinking {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
 
-		.hidden {
-			display: none;
-		}
+        .thinking p {
+            font-size: 18px;
+            color: #555;
+            margin-top: 10px;
+        }
 
-		.thinking {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			margin-top: 30px;
-		}
+        .logo {
+            width: 50px;
+        }
 
-		.thinking p {
-			font-size: 18px;
-			color: #555;
-			margin-top: 10px;
-		}
+        .loading {
+            display: flex;
+            align-items: center;
+        }
 
-	</style>
+        .page-header {
+            margin-top: 10px;
+        }
+
+
+
+    </style>
 </head>
+
 <body>
-	<header class="header">
-		<h1>{{ bot_name }}</h1>
-	</header>
+    <header class="header">
+        <img src="{{ url_for('images', filename=logo_file) }}" alt="Image" class="logo">
+        <h1 class="page-header">{{ bot_name }}</h1>
+    </header>
 
-	<main class="container">
-		<div class="box">
-			{% for message in messages %}
-			<p>{% if message['user_name'] == 'user' %}You{% else %}{{ bot_name }}{% endif %}: {{ message['content'] }}</p>
-			<hr>
-			{% endfor %}
-			<form method="POST" id="myForm">
-				<input type="hidden" name="convo_id" value="{{ convo_id }}">
-				<input type="text" id="content" name="content" placeholder="Type your message here...">
-				<input type="submit" id="submitBtn" value="Send">
-				<div id="loading" class="hidden">
-					<div class="spinner"></div>
-					<p>Thinking...</p>
-				</div>
-			</form>
+    <main class="container">
+        <div class="box">
+            {% for message in messages %}
+            <p>{% if message['user_name'] == 'user' %}You{% else %}{{ bot_name }}{% endif %}: {{ message['content'] }}
+            </p>
+            <hr>
+            {% endfor %}
+            <p id="last-message" class="hidden"></p>
+            <div id="loading" class="hidden">
+                <hr>
+                <div class="loader"></div>
+            </div>
+            <form method="POST" id="myForm">
+                <input type="hidden" name="convo_id" value="{{ convo_id }}">
+                <input type="text" id="content" name="content" placeholder="Type your message here...">
+                <input type="submit" id="submitBtn" value="Send">
+            </form>
 
-		</div>
-	</main>
+        </div>
+    </main>
 
-	<script>
-		var form = document.getElementById('myForm');
-		var submitBtn = document.getElementById('submitBtn');
-		var loading = document.getElementById('loading');
+    <script>
+        var form = document.getElementById('myForm');
+        var submitBtn = document.getElementById('submitBtn');
+        var loading = document.getElementById('loading');
         var textBox = document.getElementById('content');
+        var lastMessage = document.getElementById('last-message')
 
-		form.addEventListener('submit', function(event) {
-			submitBtn.classList.add('hidden');
+        form.addEventListener('submit', function (event) {
+            lastMessage.classList.remove('hidden')
+            lastMessage.innerHTML = 'You: ' + textBox.value;
+            submitBtn.classList.add('hidden');
             textBox.classList.add('hidden');
-			loading.classList.remove('hidden');
+            loading.classList.remove('hidden');
             loading.classList.remove('thinking');
 
-		});
-	</script>
+        });
+    </script>
 </body>
-</html>
 
+</html>

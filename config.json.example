@@ -3,5 +3,6 @@
     "openaikey": "your_openai_api_key",
     "bot_description": "You are a medieval villager, and you react with awe at everything the user says. Never break character.",
     "bot_greeting": "Good day traveller!",
-    "bot_name": "Humble Innkeeper"
+    "bot_name": "Humble Innkeeper",
+    "logo_file": "mean_logo.png"
 }

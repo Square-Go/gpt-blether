@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import sqlite3
 import uuid
 import json
 import openai
+import os
 
 
 class Message:
@@ -24,10 +25,12 @@ assert "openaikey" in user_settings
 assert "bot_description" in user_settings
 assert "bot_greeting" in user_settings
 assert "bot_name" in user_settings
+assert "logo_file" in user_settings
 
 bot_description = user_settings["bot_description"]
 bot_greeting = user_settings["bot_greeting"]
 bot_name = user_settings["bot_name"]
+logo_file = user_settings["logo_file"]
 openai.api_key = user_settings["openaikey"]
 
 
@@ -75,6 +78,11 @@ def invoke_gpt(messages):
 
     return Message(user_name="assistant", content=response['choices'][0]['message']['content'], hidden=False)
 
+@app.route('/images/<filename>')
+def images(filename):
+    image_folder = os.path.join(app.root_path, 'images')
+    return send_from_directory(image_folder, filename)
+
 
 @app.route('/')
 def hello():
@@ -90,7 +98,7 @@ def hello():
         if messages is None or len(messages) == 0:
             return render_template('error.html', message="Woops, it looks like this convo no longer exists!")
 
-    return render_template('index.html', messages=messages, convo_id=convo_id, bot_name=bot_name)
+    return render_template('index.html', messages=messages, convo_id=convo_id, bot_name=bot_name, logo_file=logo_file)
 
 @app.route('/', methods=['POST'])
 def submit_form():
