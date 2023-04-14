@@ -16,25 +16,45 @@ class Message:
     def to_gpt_request_style(self):
         return {"role": self.user_name, "content": self.content}
 
+class Bot:
+
+    def __init__(self, json_object: dict):
+        # assert all required fields are present and show error page if not
+        assert "gpt_model" in json_object
+        assert "bot_name" in json_object
+        assert "bot_description" in json_object
+        assert "bot_greeting" in json_object
+        
+
+        #load all self variables from json object
+        self.gpt_model = json_object["gpt_model"]
+        self.bot_name = json_object["bot_name"]
+        self.bot_description = json_object["bot_description"]
+        self.bot_greeting = json_object["bot_greeting"]
+        if "logo_file" in json_object:
+            self.logo_file = json_object["logo_file"]
+        else:
+            self.logo_file = "bot_logo.png"
+        
+
 app = Flask(__name__)
 
 with open('config.json', 'r') as f:
     user_settings = json.load(f)
-assert "gpt_model" in user_settings
-assert "openaikey" in user_settings
-assert "bot_description" in user_settings
-assert "bot_greeting" in user_settings
-assert "bot_name" in user_settings
-assert "logo_file" in user_settings
 
-bot_description = user_settings["bot_description"]
-bot_greeting = user_settings["bot_greeting"]
-bot_name = user_settings["bot_name"]
-logo_file = user_settings["logo_file"]
+
+assert "openaikey" in user_settings
 openai.api_key = user_settings["openaikey"]
 
+assert "bots" in user_settings
+bots = {}
+for bot in user_settings["bots"]:
+    bots[bot["bot_name"]] = Bot(bot)
 
-db_name = f"{bot_name}_messages.db"
+assert len(bots) > 0
+print (f"Loaded {len(bots)} bots: {', '.join([str(x.__dict__) for x in bots.values()])}")
+
+db_name = f"bot_messages.db"
 print("Setting up Database.")
 with sqlite3.connect(db_name) as conn:
     c = conn.cursor()
@@ -58,19 +78,19 @@ def validate_convo_id(convo_id) -> bool:
         return result > 0
 
 
-def get_initial_system_description():
-    return Message("system", bot_description, hidden=True)
+def get_initial_system_description(bot: Bot):
+    return Message("system", bot.bot_description, hidden=True)
 
-def get_initial_system_message():
-    return Message("assistant", content=bot_greeting, hidden=False)
+def get_initial_system_message(bot: Bot):
+    return Message("assistant", content=bot.bot_greeting, hidden=False)
 
-def invoke_gpt(messages):
+def invoke_gpt(bot: Bot, messages):
 
-    converted = [get_initial_system_description()]
+    converted = [get_initial_system_description(bot)]
     converted.extend(messages)
     converted = [x.to_gpt_request_style() for x in converted]
     response = openai.ChatCompletion.create(
-        model=user_settings["gpt_model"],
+        model=bot.gpt_model,
         messages=converted
     )
     #todo validate stop reason
@@ -84,13 +104,23 @@ def images(filename):
     return send_from_directory(image_folder, filename)
 
 
-@app.route('/')
-def hello():
+@app.route("/")
+def index():
+    return render_template('index.html', bots=bots.values(), main_logo_file="bot_logo.png")
+
+
+@app.route('/convo/<bot_name>')
+def convo(bot_name):
+
+    if not bot_name in bots:
+        return render_template('error.html', message=f"The bot {bot_name} does not exist!")
+
+    bot = bots[bot_name]
 
     convo_id = None
     if "convo_id" not in request.args:
         convo_id = str(uuid.uuid4())
-        messages = [get_initial_system_message()]
+        messages = [get_initial_system_message(bot)]
         add_message(convo_id=convo_id, message=messages[0])
     else: 
         convo_id = str(request.args.get("convo_id"))
@@ -98,12 +128,12 @@ def hello():
         if messages is None or len(messages) == 0:
             return render_template('error.html', message="Woops, it looks like this convo no longer exists!")
 
-    return render_template('index.html', messages=messages, convo_id=convo_id, bot_name=bot_name, logo_file=logo_file)
+    return render_template('convo.html', messages=messages, convo_id=convo_id, bot=bot)
 
-@app.route('/', methods=['POST'])
-def submit_form():
+@app.route('/convo/<bot_name>', methods=['POST'])
+def submit_form(bot_name):
     convo_id = str(request.form['convo_id'])
-    
+    bot = bots[str(bot_name)]
     if not validate_convo_id(convo_id=convo_id):
         return render_template('error.html', message="Woops, it looks like this convo no longer exists!")
 
@@ -112,7 +142,7 @@ def submit_form():
     message = Message(user_name=user_name, content=content, hidden=False)
     add_message(convo_id, message)
     all_messages = get_messages(convo_id=convo_id)
-    next_message = invoke_gpt(all_messages)
+    next_message = invoke_gpt(bot, all_messages)
     add_message(convo_id=convo_id, message=next_message)
 
     if (all_messages is None or len(all_messages) == 0):
@@ -120,7 +150,7 @@ def submit_form():
 
 
 
-    return redirect(url_for('hello', convo_id=convo_id))
+    return redirect(url_for('convo', bot_name=bot.bot_name, convo_id=convo_id))
 
 
 def get_messages(convo_id: str):
