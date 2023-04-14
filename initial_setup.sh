@@ -39,5 +39,7 @@ sed -i -E "s/<your_openai_key>/$openai_key/g" config.json
 
 # Display a confirmation message
 
+export FLASK_APP=bot
+
 echo "Everything is ready! Run './run.sh' to start the webapp."
 deactivate;
