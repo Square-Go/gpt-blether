@@ -33,6 +33,7 @@
 			height: 100vh;
 		}
 
+
 		.box {
 			width: 80%;
 			max-width: 600px;
@@ -95,26 +96,78 @@
 			background-color: #3e8e41;
 		}
 
+		.spinner {
+			border: 0.5rem solid rgba(0, 0, 0, 0.1);
+			border-top-color: #4CAF50;
+			border-radius: 50%;
+			width: 3rem;
+			height: 3rem;
+			animation: spin 1s ease-in-out infinite;
+		}
+
+		@keyframes spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		.thinking {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 30px;
+		}
+
+		.thinking p {
+			font-size: 18px;
+			color: #555;
+			margin-top: 10px;
+		}
+
 	</style>
 </head>
 <body>
 	<header class="header">
-		<h1>EliisaBot</h1>
+		<h1>{{ bot_name }}</h1>
 	</header>
 
 	<main class="container">
 		<div class="box">
-            {% for message in messages %}
-            <p>{{ message['user_name'] }}: {{ message['content'] }}</p>
-            <hr>
-            {% endfor %}
-            <form>
-                <input type="hidden" name="messages" value="{{ convo_id }}">
-				<input type="text" id="message" name="message" placeholder="Type your message here...">
-				<input type="submit" value="Send">
+			{% for message in messages %}
+			<p>{% if message['user_name'] == 'user' %}You{% else %}{{ bot_name }}{% endif %}: {{ message['content'] }}</p>
+			<hr>
+			{% endfor %}
+			<form method="POST" id="myForm">
+				<input type="hidden" name="convo_id" value="{{ convo_id }}">
+				<input type="text" id="content" name="content" placeholder="Type your message here...">
+				<input type="submit" id="submitBtn" value="Send">
+				<div id="loading" class="hidden">
+					<div class="spinner"></div>
+					<p>Thinking...</p>
+				</div>
 			</form>
 
 		</div>
 	</main>
+
+	<script>
+		var form = document.getElementById('myForm');
+		var submitBtn = document.getElementById('submitBtn');
+		var loading = document.getElementById('loading');
+        var textBox = document.getElementById('content');
+
+		form.addEventListener('submit', function(event) {
+			submitBtn.classList.add('hidden');
+            textBox.classList.add('hidden');
+			loading.classList.remove('hidden');
+            loading.classList.remove('thinking');
+
+		});
+	</script>
 </body>
 </html>
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Error</title>
+	<style>
+		body {
+			background-color: #f8f9fa;
+			font-family: Arial, sans-serif;
+		}
+		
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+		}
+		
+		.sad-face {
+			font-size: 8rem;
+			margin-bottom: 2rem;
+		}
+		
+		h1 {
+			font-size: 3rem;
+			font-weight: bold;
+			color: #dc3545;
+			margin-bottom: 1rem;
+		}
+		
+		p {
+			font-size: 1.5rem;
+			color: #6c757d;
+			margin-bottom: 2rem;
+			text-align: center;
+			line-height: 2.5rem;
+			max-width: 40rem;
+		}
+		
+		button {
+			font-size: 1.5rem;
+			color: #fff;
+			background-color: #007bff;
+			border: none;
+			border-radius: 0.3rem;
+			padding: 1rem 2rem;
+			cursor: pointer;
+			transition: background-color 0.2s;
+		}
+		
+		button:hover {
+			background-color: #0069d9;
+		}
+		
+		button:focus {
+			outline: none;
+			box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="sad-face">:(</div>
+		<h1>Ooops, we messed up!</h1>
+		<p>Something went wrong on our end and we're working to fix it as soon as possible.</p>
+		<p>Please try again later or contact us if the problem persists.</p>
+        <p><p>{{ message }}</p>
+
+		<button onclick="window.location.href='/'">Go back to homepage</button>
+	</div>
+</body>
+</html>
