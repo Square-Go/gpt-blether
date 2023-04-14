@@ -1,5 +1,5 @@
 {
-    "openaikey": "<your openai key>",
+    "openaikey": "<your_openai_key>",
     "bots": [
         {
             "gpt_model": "gpt-4",

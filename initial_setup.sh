@@ -29,13 +29,15 @@ cp config.json.example config.json
 
 # Prompt the user for their OpenAI API key
 echo "Please enter your OpenAI API key to update the config file:"
-read -r openai_key
+read -rs openai_key
 
 
 # Replace <your_openai_key> in config.json with the user's key
-sed -i "s/<your_openai_key>/$openai_key/g" config.json
+sed -i -E "s/<your_openai_key>/$openai_key/g" config.json
+
+[ $? -eq 0 ] && { echo "OpenAI API key set in config.json!"; } || { echo "Failed to set openaikey in config.json. You can set this yourself, the rest of setup is complete."; }
 
 # Display a confirmation message
-echo "OpenAI API key set in config.json!"
 
 echo "Everything is ready! Run './run.sh' to start the webapp."
+deactivate;
