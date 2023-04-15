@@ -16,7 +16,7 @@
 There are simple scripts in the parent directory to get this up and running. To clone and run immediately: 
 
 ```bash
-git clone https://github.com/Square-Go/gpt-blether.git && cd gpt-blether && ./initial_setup.sh && ./run.sh
+git clone https://github.com/Square-Go/gpt-bot-council.git && cd gpt-bot-council && ./initial_setup.sh && ./run.sh
 ```
 
 Or if you've already cloned just run initial_setup.sh and then run.sh.
